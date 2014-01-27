@@ -37,7 +37,11 @@ object MydietBuild extends Build {
     id = "mydiet",
     base = file("."),
     settings = commonSettings ++ Seq(
-      name := "mydiet"
+      name := "mydiet",
+      libraryDependencies ++= Seq(
+        "org.sisioh" %% "scala-dddbase-core" % "0.2.0-SNAPSHOT",
+        "org.sisioh" %% "baseunits-scala" % "0.1.12-SNAPSHOT"
+      )
     )
   )
 }
