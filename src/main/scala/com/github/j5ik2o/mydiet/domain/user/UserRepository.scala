@@ -1,16 +1,14 @@
 package com.github.j5ik2o.mydiet.domain.user
 
-import org.sisioh.dddbase.core.lifecycle.Repository
-import scala.concurrent.Future
-import scala.util.Try
+import org.sisioh.dddbase.core.lifecycle.async.AsyncRepository
 
-trait UserRepository extends Repository[UserId, User, Try] {
+trait UserRepository extends AsyncRepository[UserId, User] {
 
 }
 
 
 object UserRepository {
 
-    def ofMemory: UserRepository = new UserRepositoryOnMemory
+  def ofMemory: UserRepository = new UserRepositoryOnMemory
 
 }
