@@ -1,40 +1,41 @@
 package com.github.j5ik2o.mydiet.domain.meal
 
-import org.sisioh.dddbase.core.model.Entity
+import org.sisioh.dddbase.core.model.{EntityCloneable, Entity}
 import com.github.j5ik2o.mydiet.domain.user.UserId
 
+trait FoodCarbohydratesInternalValue {
+  val sugar: Float
+  val fibre: Float
+  val total = sugar + fibre
+
+  def +(other: FoodCarbohydratesInternalValue): FoodCarbohydratesInternalValue
+
+  def -(other: FoodCarbohydratesInternalValue): FoodCarbohydratesInternalValue
+}
+
+object FoodCarbohydratesInternalValue {
+
+  private[mydiet]
+  case class Default(sugar: Float, fibre: Float)
+    extends FoodCarbohydratesInternalValue {
+
+    override def +(other: FoodCarbohydratesInternalValue): FoodCarbohydratesInternalValue =
+      copy(sugar = sugar + other.sugar, fibre = fibre + other.fibre)
+
+    override def -(other: FoodCarbohydratesInternalValue): FoodCarbohydratesInternalValue =
+      copy(sugar = sugar + other.sugar, fibre = fibre + other.fibre)
+  }
+
+}
 
 /**
  * 炭水化物
  */
 trait FoodCarbohydrates {
 
-  trait InternalValue {
-    val sugar: Float
-    val fibre: Float
-
-    def +(other: InternalValue): InternalValue
-
-    def -(other: InternalValue): InternalValue
-  }
-  
-  object InternalValue{
-    
-    private[mydiet]
-    case class Default(sugar: Float, fibre: Float)
-      extends FoodCarbohydrates#InternalValue {
-      override def +(other: FoodCarbohydrates#InternalValue): FoodCarbohydrates#InternalValue =
-        copy(sugar = sugar + other.sugar, fibre = fibre + other.fibre)
-
-      override def -(other: FoodCarbohydrates#InternalValue): FoodCarbohydrates#InternalValue =
-        copy(sugar = sugar + other.sugar, fibre = fibre + other.fibre)
-    }
-    
-  }
-
   val value: Float
 
-  val internal: Option[InternalValue]
+  val internal: Option[FoodCarbohydratesInternalValue]
 
   def +(other: FoodCarbohydrates): FoodCarbohydrates
 
@@ -47,26 +48,33 @@ object FoodCarbohydrates {
   private[mydiet]
   case class Default
   (value: Float,
-   internal: Option[FoodCarbohydrates#InternalValue])
+   internal: Option[FoodCarbohydratesInternalValue])
     extends FoodCarbohydrates {
 
     override def +(other: FoodCarbohydrates): FoodCarbohydrates = {
-      copy(value = value + other.value, internal = for {
-        me <- internal
-        you <- other.internal
-      } yield {
-        me + you
-      })
+      copy(
+        value = value + other.value,
+        internal = for {
+          me <- internal
+          you <- other.internal
+        } yield {
+          me + you
+        }
+      )
     }
 
     override def -(other: FoodCarbohydrates): FoodCarbohydrates = {
-      copy(value = value - other.value, internal = for {
-        me <- internal
-        you <- other.internal
-      } yield {
-        me - you
-      })
+      copy(
+        value = value - other.value,
+        internal = for {
+          me <- internal
+          you <- other.internal
+        } yield {
+          me - you
+        }
+      )
     }
+
   }
 
 }
@@ -138,7 +146,8 @@ object FoodIngredient {
 }
 
 
-trait Food extends Entity[FoodId] {
+trait Food
+  extends Entity[FoodId] with EntityCloneable[FoodId, Food] with Ordered[Food] {
 
   val name: String
 
@@ -158,18 +167,20 @@ object Food {
     Default(identifier, name, ingredient, creatorId, brandId)
 
 
-  def ofSettable(identifier: FoodId,
-                 name: String,
-                 materialIds: Seq[FoodId],
-                 creatorId: Option[UserId] = None,
-                 brandId: Option[FoodBrandId] = None)(implicit fr: FoodRepository): Food =
+  def ofSettable(identifier_ : FoodId,
+                 name_ : String,
+                 materialIds_ : Seq[FoodId],
+                 creatorId_ : Option[UserId] = None,
+                 brandId_ : Option[FoodBrandId] = None)(implicit fr: FoodRepository): Food =
     new Food with Settable {
-      override val identifier: FoodId = identifier
-      override val brandId: Option[FoodBrandId] = brandId
-      override val creatorId: Option[UserId] = creatorId
-      override val name: String = name
+      override val identifier: FoodId = identifier_
+      override val brandId: Option[FoodBrandId] = brandId_
+      override val creatorId: Option[UserId] = creatorId_
+      override val name: String = name_
       override val foodRepository: FoodRepository = fr
-      override val materialIds: Seq[FoodId] = materialIds
+      override val materialIds: Seq[FoodId] = materialIds_
+
+      override def compare(that: Food): Int = this.identifier.value.compareTo(that.identifier.value)
     }
 
   private[mydiet] case class Default
@@ -178,7 +189,9 @@ object Food {
    ingredient: FoodIngredient,
    creatorId: Option[UserId] = None,
    brandId: Option[FoodBrandId] = None)
-    extends Food
+    extends Food {
+    override def compare(that: Food): Int = this.identifier.value.compareTo(that.identifier.value)
+  }
 
 
 }

@@ -33,7 +33,7 @@ object MydietBuild extends Build {
     }
   )
 
-  val trinityVersion = "1.0.3-SNAPSHOT"
+  val trinityVersion = "1.0.3"
 
   lazy val mydiet = Project(
     id = "mydiet",
