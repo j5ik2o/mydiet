@@ -33,6 +33,8 @@ object MydietBuild extends Build {
     }
   )
 
+  val trinityVersion = "1.0.3"
+
   lazy val mydiet = Project(
     id = "mydiet",
     base = file("."),
@@ -41,7 +43,8 @@ object MydietBuild extends Build {
       libraryDependencies ++= Seq(
         "org.sisioh" %% "scala-dddbase-core" % "0.2.0-SNAPSHOT",
         "org.sisioh" %% "baseunits-scala" % "0.1.12",
-        "org.sisioh" %% "trinity-core" % "1.0.3"
+        "org.sisioh" %% "trinity-core" % trinityVersion,
+        "org.sisioh" %% "trinity-test" % trinityVersion
       )
     )
   )
