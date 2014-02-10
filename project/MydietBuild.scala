@@ -11,6 +11,7 @@ object MydietBuild extends Build {
     scalacOptions ++= Seq("-encoding", "UTF-8", "-feature", "-deprecation", "-unchecked"),
     javacOptions ++= Seq("-encoding", "UTF-8", "-deprecation"),
     resolvers ++= Seq(
+      "Eaio Repository" at "http://eaio.com/maven2",
       "Twitter Repository" at "http://maven.twttr.com/",
       "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/",
       "Sonatype Release Repository" at "https://oss.sonatype.org/content/repositories/releases/",
@@ -41,6 +42,7 @@ object MydietBuild extends Build {
     settings = commonSettings ++ Seq(
       name := "mydiet",
       libraryDependencies ++= Seq(
+        "com.eaio.uuid" % "uuid" % "3.4",
         "org.sisioh" %% "scala-dddbase-core" % "0.2.0-SNAPSHOT",
         "org.sisioh" %% "baseunits-scala" % "0.1.12",
         "org.sisioh" %% "trinity-core" % trinityVersion,

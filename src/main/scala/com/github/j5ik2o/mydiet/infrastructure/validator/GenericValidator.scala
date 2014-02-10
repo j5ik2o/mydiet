@@ -170,7 +170,7 @@ object GenericValidator {
    * @return [[scalaz.ValidationNel]]
    */
   def validateIdentifier[A <: Identifier[UUID]](name: String, value: Option[String])
-                                               (apply: UUID => A = Identifier.apply): ValidationNel[Throwable, A] =
+                                               (apply: UUID => A): ValidationNel[Throwable, A] =
     value.map {
       strValue =>
         Try(apply(new UUID(strValue))).map {
@@ -189,7 +189,7 @@ object GenericValidator {
    * @return [[scalaz.ValidationNel]]
    */
   def validateIdentifierAsOption[A <: Identifier[UUID]](name: String, value: Option[String])
-                                                       (apply: UUID => A = Identifier.apply): ValidationNel[Throwable, Option[A]] =
+                                                       (apply: UUID => A): ValidationNel[Throwable, Option[A]] =
     value.map {
       strValue =>
         Try(apply(new UUID(strValue))).map {
